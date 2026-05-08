@@ -6,6 +6,8 @@ An experimental standalone desktop pet inspired by the small animated pets in th
 
 This project reuses a Codex-compatible pet package, renders the pet as a floating Windows companion, and changes its animation state based on live system telemetry such as CPU, RAM, disk, and network activity.
 
+![Codex Pet picker menu](assets/pet-menu-preview.png)
+
 ## Concept
 
 Codex pets are tiny animated companions built from a fixed spritesheet atlas. In Codex, they sit inside the product experience. This project explores what happens when that same idea becomes independent from Codex: a small desktop companion that reacts to the health and workload of the machine itself.
@@ -17,9 +19,13 @@ The pet is not just decorative. It acts like an ambient status indicator:
 - When the machine is under heavy pressure, it falls into an error state.
 - When disk or network activity spikes, it runs.
 
-## Current Pet
+## Pets
 
-The current build reads the existing local Codex pet:
+The app can use one custom local pet and several Codex built-in pet spritesheets.
+
+### Custom Pet: Ngoan Dong
+
+`Ngoan Dong` is a custom Codex-compatible pet created with the `hatch-pet` skill. It is read from:
 
 ```text
 $HOME/.codex/pets/ngoan-dong
@@ -48,6 +54,38 @@ Example manifest:
   "spritesheetPath": "spritesheet.webp"
 }
 ```
+
+### Built-In Codex Pets
+
+The other pets are built-in pets from the Codex desktop app. Their spritesheets are stored in `assets/built-in-pets/` for local experimentation:
+
+```text
+assets/built-in-pets/
+  codex-spritesheet-v4-Bl6P89d_.webp
+  dewey-spritesheet-v4-gAYk_M9g.webp
+  fireball-spritesheet-v4-BtU8R9Qp.webp
+  rocky-spritesheet-v4-3RlTi26B.webp
+  seedy-spritesheet-v4-CdlE_fn9.webp
+  stacky-spritesheet-v4-CaUJd4fY.webp
+  bsod-spritesheet-v4-BRrRVy1T.webp
+  null-signal-spritesheet-v4-CCoTR-8t.webp
+```
+
+Available pet choices:
+
+| Pet | Description |
+| --- | --- |
+| Ngoan Dong | Custom local pet created with the `hatch-pet` skill. |
+| Codex | The original Codex companion. |
+| Dewey | A tidy duck for calm workspace days. |
+| Fireball | Hot path energy for fast iteration. |
+| Rocky | A steady rock when the diff gets large. |
+| Seedy | Small green shoots for new ideas. |
+| Stacky | A balanced stack for deep work. |
+| BSOD | A tiny blue-screen companion. |
+| Null Signal | Quiet signal from the void. |
+
+Right-click the pet, or press `M` while the pet window is focused, to open the pet picker menu.
 
 ## Pet Atlas
 
@@ -163,7 +201,7 @@ The current window is designed to behave like a desktop pet:
 - Transparent background.
 - Frameless window.
 - Drag the pet area to move it.
-- Right click for `Reload` and `Quit`.
+- Right click, or press `M`, for pet selection, `Reload`, and `Quit`.
 
 ## Architecture
 

@@ -132,18 +132,11 @@ function renderFrame(now: number) {
 }
 
 async function boot() {
-  const petInfo = await window.petRuntime?.getPetInfo();
-  if (!petInfo) {
-    throw new Error("Pet runtime API is unavailable.");
-  }
+  await loadCurrentPet();
 
-  petName.textContent = petInfo.displayName;
-  document.querySelector(".pet-shell")?.setAttribute(
-    "title",
-    "1 idle, 2 run right, 3 run left, 4 wave, 5 jump, 6 failed, 7 waiting, 8 running, 9 review, 0/Esc auto"
-  );
-  sprite.style.backgroundImage = `url("${petInfo.spritesheetUrl}")`;
-  sprite.style.backgroundSize = `${CELL_WIDTH * ATLAS_COLUMNS}px ${CELL_HEIGHT * ATLAS_ROWS}px`;
+  window.petRuntime?.onPetChanged(() => {
+    void loadCurrentPet();
+  });
 
   window.petRuntime?.onMetrics((metrics) => {
     const now = performance.now();
@@ -162,6 +155,11 @@ async function boot() {
   });
 
   window.addEventListener("keydown", (event) => {
+    if (event.key.toLowerCase() === "m") {
+      void window.petRuntime?.showMenu();
+      return;
+    }
+
     const nextOverride = stateFromShortcut(event.key);
     if (event.key === "0" || event.key === "Escape") {
       overrideState = undefined;
@@ -179,6 +177,21 @@ async function boot() {
   });
 
   requestAnimationFrame(renderFrame);
+}
+
+async function loadCurrentPet() {
+  const petInfo = await window.petRuntime?.getPetInfo();
+  if (!petInfo) {
+    throw new Error("Pet runtime API is unavailable.");
+  }
+
+  petName.textContent = petInfo.displayName;
+  document.querySelector(".pet-shell")?.setAttribute(
+    "title",
+    "1 idle, 2 run right, 3 run left, 4 wave, 5 jump, 6 failed, 7 waiting, 8 running, 9 review, 0/Esc auto"
+  );
+  sprite.style.backgroundImage = `url("${petInfo.spritesheetUrl}")`;
+  sprite.style.backgroundSize = `${CELL_WIDTH * ATLAS_COLUMNS}px ${CELL_HEIGHT * ATLAS_ROWS}px`;
 }
 
 function formatBytesPerSecond(bytesPerSecond: number) {

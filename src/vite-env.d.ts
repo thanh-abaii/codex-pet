@@ -14,6 +14,9 @@ interface SystemMetrics {
 
 interface PetRuntimeApi {
   getPetInfo(): Promise<PetInfo>;
+  listPets(): Promise<PetInfo[]>;
+  showMenu(): Promise<void>;
+  onPetChanged(callback: () => void): () => void;
   onMetrics(callback: (metrics: SystemMetrics) => void): () => void;
 }
 

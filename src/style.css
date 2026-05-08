@@ -17,13 +17,13 @@ body,
 }
 
 .pet-shell {
-  width: 260px;
-  height: 300px;
+  width: 210px;
+  height: 250px;
   display: grid;
   place-items: center;
   align-content: center;
   gap: 6px;
-  -webkit-app-region: drag;
+  -webkit-app-region: no-drag;
 }
 
 .pet-sprite {
@@ -31,10 +31,12 @@ body,
   height: 208px;
   flex: 0 0 auto;
   background-repeat: no-repeat;
-  image-rendering: pixelated;
-  filter: drop-shadow(0 10px 14px rgb(0 0 0 / 0.34));
-  transform: scale(1);
+  image-rendering: auto;
+  filter: drop-shadow(0 8px 12px rgb(0 0 0 / 0.32));
+  transform: scale(0.74);
   transform-origin: center;
+  -webkit-app-region: drag;
+  margin: -26px 0 -30px;
 }
 
 .status-strip,
@@ -44,7 +46,7 @@ body,
   justify-content: center;
   gap: 8px;
   min-height: 22px;
-  padding: 4px 8px;
+  padding: 4px 7px;
   border: 1px solid rgb(255 255 255 / 0.16);
   border-radius: 8px;
   background: rgb(16 18 20 / 0.62);
@@ -53,11 +55,12 @@ body,
   font-size: 12px;
   line-height: 1;
   white-space: nowrap;
+  -webkit-app-region: no-drag;
 }
 
 .metrics {
   color: #c8c6bd;
-  font-size: 11px;
+  font-size: 10px;
   opacity: 0.72;
   transition: opacity 140ms ease;
 }

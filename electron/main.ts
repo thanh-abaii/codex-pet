@@ -26,8 +26,59 @@ type SystemMetrics = {
 const petDir = path.join(app.getPath("home"), ".codex", "pets", "ngoan-dong");
 const petManifestPath = path.join(petDir, "pet.json");
 const logPath = path.join(app.getPath("userData"), "codex-pet.log");
+const builtInPets = [
+  {
+    id: "codex",
+    displayName: "Codex",
+    description: "The original Codex companion.",
+    spritesheetPath: path.join(__dirname, "..", "assets", "built-in-pets", "codex-spritesheet-v4-Bl6P89d_.webp")
+  },
+  {
+    id: "dewey",
+    displayName: "Dewey",
+    description: "A tidy duck for calm workspace days.",
+    spritesheetPath: path.join(__dirname, "..", "assets", "built-in-pets", "dewey-spritesheet-v4-gAYk_M9g.webp")
+  },
+  {
+    id: "fireball",
+    displayName: "Fireball",
+    description: "Hot path energy for fast iteration.",
+    spritesheetPath: path.join(__dirname, "..", "assets", "built-in-pets", "fireball-spritesheet-v4-BtU8R9Qp.webp")
+  },
+  {
+    id: "rocky",
+    displayName: "Rocky",
+    description: "A steady rock when the diff gets large.",
+    spritesheetPath: path.join(__dirname, "..", "assets", "built-in-pets", "rocky-spritesheet-v4-3RlTi26B.webp")
+  },
+  {
+    id: "seedy",
+    displayName: "Seedy",
+    description: "Small green shoots for new ideas.",
+    spritesheetPath: path.join(__dirname, "..", "assets", "built-in-pets", "seedy-spritesheet-v4-CdlE_fn9.webp")
+  },
+  {
+    id: "stacky",
+    displayName: "Stacky",
+    description: "A balanced stack for deep work.",
+    spritesheetPath: path.join(__dirname, "..", "assets", "built-in-pets", "stacky-spritesheet-v4-CaUJd4fY.webp")
+  },
+  {
+    id: "bsod",
+    displayName: "BSOD",
+    description: "A tiny blue-screen companion.",
+    spritesheetPath: path.join(__dirname, "..", "assets", "built-in-pets", "bsod-spritesheet-v4-BRrRVy1T.webp")
+  },
+  {
+    id: "null-signal",
+    displayName: "Null Signal",
+    description: "Quiet signal from the void.",
+    spritesheetPath: path.join(__dirname, "..", "assets", "built-in-pets", "null-signal-spritesheet-v4-CCoTR-8t.webp")
+  }
+] satisfies PetManifest[];
 
 let mainWindow: BrowserWindow | undefined;
+let selectedPetId = "ngoan-dong";
 let previousNetworkSample:
   | {
       bytes: number;
@@ -42,6 +93,52 @@ function log(message: string, error?: unknown) {
 }
 
 async function loadPetInfo(): Promise<PetInfo> {
+  const builtInPet = builtInPets.find((pet) => pet.id === selectedPetId);
+  if (builtInPet) {
+    return {
+      id: builtInPet.id,
+      displayName: builtInPet.displayName,
+      description: builtInPet.description,
+      spritesheetUrl: pathToFileURL(builtInPet.spritesheetPath).toString()
+    };
+  }
+
+  const raw = await fs.readFile(petManifestPath, "utf8");
+  const manifest = JSON.parse(raw) as PetManifest;
+  const spritesheetPath = path.isAbsolute(manifest.spritesheetPath)
+    ? manifest.spritesheetPath
+    : path.join(petDir, manifest.spritesheetPath);
+
+  return {
+    id: manifest.id,
+    displayName: manifest.displayName,
+    description: manifest.description,
+    spritesheetUrl: pathToFileURL(spritesheetPath).toString()
+  };
+}
+
+async function allPets(): Promise<PetInfo[]> {
+  const pets: PetInfo[] = [];
+  try {
+    const customPet = await loadCustomPetInfo();
+    pets.push(customPet);
+  } catch (error) {
+    log("custom-pet:failed-to-load", error);
+  }
+
+  pets.push(
+    ...builtInPets.map((pet) => ({
+      id: pet.id,
+      displayName: pet.displayName,
+      description: pet.description,
+      spritesheetUrl: pathToFileURL(pet.spritesheetPath).toString()
+    }))
+  );
+
+  return pets;
+}
+
+async function loadCustomPetInfo(): Promise<PetInfo> {
   const raw = await fs.readFile(petManifestPath, "utf8");
   const manifest = JSON.parse(raw) as PetManifest;
   const spritesheetPath = path.isAbsolute(manifest.spritesheetPath)
@@ -102,8 +199,8 @@ function clamp(value: number, min: number, max: number) {
 async function createWindow() {
   log("createWindow:start");
   mainWindow = new BrowserWindow({
-    width: 260,
-    height: 300,
+    width: 210,
+    height: 250,
     x: 160,
     y: 160,
     show: true,
@@ -141,11 +238,7 @@ async function createWindow() {
     log("webContents:did-finish-load");
   });
   mainWindow.webContents.on("context-menu", () => {
-    Menu.buildFromTemplate([
-      { label: "Reload", click: () => mainWindow?.reload() },
-      { type: "separator" },
-      { label: "Quit", click: () => app.quit() }
-    ]).popup({ window: mainWindow });
+    showPetMenu();
   });
 
   if (process.env.VITE_DEV_SERVER_URL) {
@@ -175,6 +268,30 @@ function startMetricsLoop() {
 }
 
 ipcMain.handle("pet:getInfo", loadPetInfo);
+ipcMain.handle("pet:list", allPets);
+ipcMain.handle("menu:show", showPetMenu);
+
+function showPetMenu() {
+  const petMenu = [
+    { id: "ngoan-dong", label: "Ngoan Dong" },
+    ...builtInPets.map((pet) => ({ id: pet.id, label: pet.displayName }))
+  ].map((pet) => ({
+    label: pet.label,
+    type: "radio" as const,
+    checked: pet.id === selectedPetId,
+    click: () => {
+      selectedPetId = pet.id;
+      mainWindow?.webContents.send("pet:changed", selectedPetId);
+    }
+  }));
+
+  Menu.buildFromTemplate([
+    { label: "Pet", submenu: petMenu },
+    { label: "Reload", click: () => mainWindow?.reload() },
+    { type: "separator" },
+    { label: "Quit", click: () => app.quit() }
+  ]).popup({ window: mainWindow });
+}
 
 app.whenReady().then(async () => {
   try {
