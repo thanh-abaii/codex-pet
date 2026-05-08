@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Codex Pet</title>
+  </head>
+  <body>
+    <main id="app">
+      <section class="pet-shell" aria-label="Codex pet">
+        <div id="petSprite" class="pet-sprite"></div>
+        <div class="status-strip">
+          <span id="petName">Codex Pet</span>
+          <span id="petState">idle</span>
+        </div>
+        <div class="metrics">
+          <span id="cpuMetric">CPU --%</span>
+          <span id="memoryMetric">RAM --%</span>
+          <span id="networkMetric">NET --</span>
+        </div>
+      </section>
+    </main>
+    <script type="module" src="/src/renderer.ts"></script>
+  </body>
+</html>

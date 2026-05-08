@@ -1,0 +1,28 @@
+{
+  "name": "codex-pet",
+  "version": "0.1.0",
+  "private": true,
+  "description": "A standalone desktop companion for Codex pet spritesheets.",
+  "main": "dist-electron/main.js",
+  "scripts": {
+    "dev": "npm-run-all -p dev:vite dev:electron",
+    "dev:vite": "vite --host 127.0.0.1",
+    "dev:electron": "wait-on tcp:5173 && cross-env VITE_DEV_SERVER_URL=http://127.0.0.1:5173 electron .",
+    "build": "tsc && vite build && tsc -p tsconfig.electron.json",
+    "start": "npm run build && electron .",
+    "typecheck": "tsc --noEmit && tsc -p tsconfig.electron.json --noEmit"
+  },
+  "dependencies": {
+    "@electron/remote": "^2.1.2",
+    "systeminformation": "^5.27.11"
+  },
+  "devDependencies": {
+    "@types/node": "^22.15.19",
+    "cross-env": "^7.0.3",
+    "electron": "^30.5.1",
+    "npm-run-all": "^4.1.5",
+    "typescript": "^5.8.3",
+    "vite": "^5.4.19",
+    "wait-on": "^7.2.0"
+  }
+}
