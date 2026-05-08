@@ -6,8 +6,6 @@ An experimental standalone desktop pet inspired by the small animated pets in th
 
 This project reuses a Codex-compatible pet package, renders the pet as a floating Windows companion, and changes its animation state based on live system telemetry such as CPU, RAM, disk, and network activity.
 
-![Codex Pet picker menu](assets/pet-menu-preview.png)
-
 ## Concept
 
 Codex pets are tiny animated companions built from a fixed spritesheet atlas. In Codex, they sit inside the product experience. This project explores what happens when that same idea becomes independent from Codex: a small desktop companion that reacts to the health and workload of the machine itself.
