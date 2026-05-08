@@ -2,6 +2,8 @@
 
 An experimental standalone desktop pet inspired by the small animated pets in the Codex desktop app.
 
+![Ngoan Dong desktop pet preview](assets/readme-preview.png)
+
 This project reuses a Codex-compatible pet package, renders the pet as a floating Windows companion, and changes its animation state based on live system telemetry such as CPU, RAM, disk, and network activity.
 
 ## Concept
