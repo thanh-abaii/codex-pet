@@ -22,7 +22,13 @@ The pet is not just decorative. It acts like an ambient status indicator:
 The current build reads the existing local Codex pet:
 
 ```text
-C:\Users\DELL\.codex\pets\ngoan-dong
+$HOME/.codex/pets/ngoan-dong
+```
+
+On Windows, this resolves to:
+
+```text
+%USERPROFILE%\.codex\pets\ngoan-dong
 ```
 
 Expected files:
